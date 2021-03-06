@@ -3,11 +3,28 @@ Ghost CMS API (ContentAPI + AdminAPI)
 
 ## Supported features
 
-* [x] Get posts
-* [x] Update posts
-* [ ] Get articles
-* [ ] Update articles
+### Generic
+
 * [x] Upload images
+
+### Posts
+* [ ] Add post
+* [x] Get posts
+* [x] Update post
+* [ ] Delete post
+
+### Pages
+* [ ] Add page
+* [x] Get pages
+* [ ] Update page
+* [ ] Delete page
+
+### Tags
+  
+* [ ] Add tag
+* [ ] Get tags
+* [ ] Update tag
+* [ ] Delete tag
 
 ```go
 package main
