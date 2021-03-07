@@ -10,6 +10,7 @@ type Post struct {
 	ID                 string    `json:"id,omitempty"`
 	UUID               string    `json:"uuid,omitempty"`
 	Title              string    `json:"title,omitempty"`
+	MobileDoc          string    `json:"mobiledoc"`
 	Slug               string    `json:"slug,omitempty"`
 	HTML               string    `json:"html,omitempty"`
 	CommentID          string    `json:"comment_id,omitempty"`
@@ -41,6 +42,7 @@ type Page struct {
 	ID                 string    `json:"id,omitempty"`
 	UUID               string    `json:"uuid,omitempty"`
 	Title              string    `json:"title,omitempty"`
+	MobileDoc          string    `json:"mobiledoc"`
 	Slug               string    `json:"slug,omitempty"`
 	HTML               string    `json:"html,omitempty"`
 	CommentID          string    `json:"comment_id,omitempty"`
