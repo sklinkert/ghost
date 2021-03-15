@@ -8,6 +8,18 @@ import (
 	"net/http"
 )
 
+func (g *Ghost) AdminGetPosts() (Posts, error) {
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all"
+	var posts Posts
+	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
+
+	if err := g.getJson(url, &posts); err != nil {
+		return posts, err
+	}
+
+	return posts, nil
+}
+
 func (g *Ghost) GetPosts() (Posts, error) {
 	const ghostPostsURLSuffix = "%s/ghost/api/v2/content/posts/?key=%s&limit=all"
 	var posts Posts
@@ -20,7 +32,7 @@ func (g *Ghost) GetPosts() (Posts, error) {
 	return posts, nil
 }
 
-func (g *Ghost) UpdatePost(post Post) error {
+func (g *Ghost) AdminUpdatePost(post Post) error {
 	newPost := Posts{Posts: []Post{post}}
 	updateData, _ := json.Marshal(&newPost)
 	postUpdateURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/%s", g.url, post.ID)

@@ -54,14 +54,14 @@ func main() {
 
 		// Update existing post
 		post.Title = "new title"
-		if err := ghostAPI.UpdatePost(post); err != nil {
+		if err := ghostAPI.AdminUpdatePost(post); err != nil {
 			fmt.Printf("update failed: %v\n", err)
 			break
 		}
 	}
 	
 	// Upload new image
-	imageURL, err := ghostAPI.UploadImage("./myimage.jpg")
+	imageURL, err := ghostAPI.AdminUploadImage("./myimage.jpg")
 	if err != nil {
 		fmt.Printf("Image upload failed: %v\n", err)
 	}

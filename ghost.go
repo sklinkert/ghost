@@ -23,9 +23,13 @@ type Ghost struct {
 
 // New creates new instance of ghost API client
 func New(url, contentAPIToken, adminAPIToken string) (*Ghost, error) {
-	jwtToken, err := generateJWT(adminAPIToken)
-	if err != nil {
-		return nil, err
+	var jwtToken string
+	var err error
+	if adminAPIToken != "" {
+		jwtToken, err = generateJWT(adminAPIToken)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &Ghost{
@@ -101,8 +105,8 @@ func escapeQuotes(s string) string {
 	return quoteEscaper.Replace(s)
 }
 
-// UploadImage - Creates a new file upload http request
-func (g *Ghost) UploadImage(path string) (imageURL string, err error) {
+// AdminUploadImage - Creates a new file upload http request
+func (g *Ghost) AdminUploadImage(path string) (imageURL string, err error) {
 	const paramName = "file"
 	var uri = fmt.Sprintf("%s/ghost/api/v3/admin/images/upload/", g.url)
 
