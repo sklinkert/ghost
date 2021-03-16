@@ -6,6 +6,9 @@ type Posts struct {
 	Posts []Post `json:"posts"`
 }
 
+// StatusPublished indicates if a post or pages is already published
+const StatusPublished = "published"
+
 type Post struct {
 	ID                 string    `json:"id,omitempty"`
 	UUID               string    `json:"uuid,omitempty"`
@@ -32,6 +35,7 @@ type Post struct {
 	CustomTemplate     string    `json:"custom_template,omitempty"`
 	URL                string    `json:"url,omitempty"`
 	Excerpt            string    `json:"excerpt,omitempty"`
+	Tags               []Tag     `json:"tags,omitempty"`
 }
 
 type Pages struct {
@@ -71,4 +75,18 @@ type ImageResponse struct {
 }
 type Image struct {
 	URL string
+}
+
+type Tag struct {
+	CreatedAt       time.Time `json:"created_at"`
+	Description     string    `json:"description"`
+	FeatureImage    string    `json:"feature_image"`
+	Id              string    `json:"id"`
+	MetaDescription string    `json:"meta_description"`
+	MetaTitle       string    `json:"meta_title"`
+	Name            string    `json:"name"`
+	Slug            string    `json:"slug"`
+	UpdatedAt       time.Time `json:"updated_at"`
+	Url             string    `json:"url"`
+	Visibility      string    `json:"visibility"`
 }
