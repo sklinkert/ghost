@@ -32,6 +32,18 @@ func (g *Ghost) GetPosts() (Posts, error) {
 	return posts, nil
 }
 
+func (g *Ghost) GetPostsByTag(tag string) (Posts, error) {
+	var ghostPostsURLSuffix = "%s/ghost/api/v2/content/posts/?key=%s&limit=all&filter=tag:" + tag
+	var posts Posts
+	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
+
+	if err := g.getJson(url, &posts); err != nil {
+		return posts, err
+	}
+
+	return posts, nil
+}
+
 func (g *Ghost) AdminCreatePost(post Post) error {
 	newPost := Posts{Posts: []Post{post}}
 	updateData, _ := json.Marshal(&newPost)
