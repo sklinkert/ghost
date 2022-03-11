@@ -32,6 +32,31 @@ func (g *Ghost) GetPosts() (Posts, error) {
 	return posts, nil
 }
 
+func (g *Ghost) AdminCreatePost(post Post) error {
+	newPost := Posts{Posts: []Post{post}}
+	updateData, _ := json.Marshal(&newPost)
+	postURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/", g.url)
+	req, err := http.NewRequest(http.MethodPost, postURL, bytes.NewBuffer(updateData))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Ghost"+" "+g.jwtToken)
+	resp, err := myClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	content, _ := ioutil.ReadAll(resp.Body)
+	responseBody := string(content[:])
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
+	}
+	return nil
+}
+
 func (g *Ghost) AdminUpdatePost(post Post) error {
 	newPost := Posts{Posts: []Post{post}}
 	updateData, _ := json.Marshal(&newPost)
