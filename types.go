@@ -36,6 +36,7 @@ type Post struct {
 	URL                string    `json:"url,omitempty"`
 	Excerpt            string    `json:"excerpt,omitempty"`
 	Tags               []Tag     `json:"tags,omitempty"`
+	Status             string    `json:"status,omitempty"`
 }
 
 type Pages struct {
