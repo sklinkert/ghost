@@ -77,16 +77,20 @@ type Image struct {
 	URL string
 }
 
+type Tags struct {
+	Tags []Tag `json:"tags"`
+}
+
 type Tag struct {
-	CreatedAt       time.Time `json:"created_at"`
-	Description     string    `json:"description"`
-	FeatureImage    string    `json:"feature_image"`
-	Id              string    `json:"id"`
-	MetaDescription string    `json:"meta_description"`
-	MetaTitle       string    `json:"meta_title"`
-	Name            string    `json:"name"`
-	Slug            string    `json:"slug"`
-	UpdatedAt       time.Time `json:"updated_at"`
-	Url             string    `json:"url"`
-	Visibility      string    `json:"visibility"`
+	CreatedAt       time.Time `json:"created_at,omitempty"`
+	Description     string    `json:"description,omitempty"`
+	FeatureImage    string    `json:"feature_image,omitempty"`
+	Id              string    `json:"id,omitempty"`
+	MetaDescription string    `json:"meta_description,omitempty"`
+	MetaTitle       string    `json:"meta_title,omitempty"`
+	Name            string    `json:"name,omitempty"`
+	Slug            string    `json:"slug,omitempty"`
+	UpdatedAt       time.Time `json:"updated_at,omitempty"`
+	Url             string    `json:"url,omitempty"`
+	Visibility      string    `json:"visibility,omitempty"`
 }
