@@ -10,33 +10,34 @@ type Posts struct {
 const StatusPublished = "published"
 
 type Post struct {
-	ID                 string    `json:"id,omitempty"`
-	UUID               string    `json:"uuid,omitempty"`
-	Title              string    `json:"title,omitempty"`
-	MobileDoc          string    `json:"mobiledoc,omitempty"`
-	Slug               string    `json:"slug,omitempty"`
-	HTML               string    `json:"html,omitempty"`
-	CommentID          string    `json:"comment_id,omitempty"`
-	FeatureImage       string    `json:"feature_image,omitempty"`
-	Featured           bool      `json:"featured,omitempty"`
-	Page               bool      `json:"page,omitempty"`
-	MetaTitle          string    `json:"meta_title,omitempty"`
-	MetaDescription    string    `json:"meta_description,omitempty"`
-	CreatedAt          time.Time `json:"created_at,omitempty"`
-	UpdatedAt          string    `json:"updated_at,omitempty"`
-	PublishedAt        time.Time `json:"published_at,omitempty"`
-	CustomExcerpt      string    `json:"custom_excerpt,omitempty"`
-	OGImage            string    `json:"og_image,omitempty"`
-	OGTitle            string    `json:"og_title,omitempty"`
-	OGDescription      string    `json:"og_description,omitempty"`
-	TwitterImage       string    `json:"twitter_image,omitempty"`
-	TwitterTitle       string    `json:"twitter_title,omitempty"`
-	TwitterDescription string    `json:"twitter_description,omitempty"`
-	CustomTemplate     string    `json:"custom_template,omitempty"`
-	URL                string    `json:"url,omitempty"`
-	Excerpt            string    `json:"excerpt,omitempty"`
-	Tags               []Tag     `json:"tags,omitempty"`
-	Status             string    `json:"status,omitempty"`
+	ID                 string `json:"id,omitempty"`
+	UUID               string `json:"uuid,omitempty"`
+	Title              string `json:"title,omitempty"`
+	MobileDoc          string `json:"mobiledoc,omitempty"`
+	Slug               string `json:"slug,omitempty"`
+	HTML               string `json:"html,omitempty"`
+	CommentID          string `json:"comment_id,omitempty"`
+	FeatureImage       string `json:"feature_image,omitempty"`
+	Featured           bool   `json:"featured,omitempty"`
+	Page               bool   `json:"page,omitempty"`
+	MetaTitle          string `json:"meta_title,omitempty"`
+	MetaDescription    string `json:"meta_description,omitempty"`
+	CreatedAt          string `json:"created_at,omitempty"`   // "2022-01-05T22:39:28.000Z"
+	UpdatedAt          string `json:"updated_at,omitempty"`   // "2022-04-02T16:01:24.000Z"
+	PublishedAt        string `json:"published_at,omitempty"` // "2022-01-19T06:31:00.000Z"
+	CustomExcerpt      string `json:"custom_excerpt,omitempty"`
+	OGImage            string `json:"og_image,omitempty"`
+	OGTitle            string `json:"og_title,omitempty"`
+	OGDescription      string `json:"og_description,omitempty"`
+	TwitterImage       string `json:"twitter_image,omitempty"`
+	TwitterTitle       string `json:"twitter_title,omitempty"`
+	TwitterDescription string `json:"twitter_description,omitempty"`
+	CustomTemplate     string `json:"custom_template,omitempty"`
+	URL                string `json:"url,omitempty"`
+	Excerpt            string `json:"excerpt,omitempty"`
+	Tags               []Tag  `json:"tags,omitempty"`
+	Status             string `json:"status,omitempty"`     // "published"
+	Visibility         string `json:"visibility,omitempty"` // "public"
 }
 
 type Pages struct {
@@ -44,31 +45,31 @@ type Pages struct {
 }
 
 type Page struct {
-	ID                 string    `json:"id,omitempty"`
-	UUID               string    `json:"uuid,omitempty"`
-	Title              string    `json:"title,omitempty"`
-	MobileDoc          string    `json:"mobiledoc"`
-	Slug               string    `json:"slug,omitempty"`
-	HTML               string    `json:"html,omitempty"`
-	CommentID          string    `json:"comment_id,omitempty"`
-	FeatureImage       string    `json:"feature_image,omitempty"`
-	Featured           bool      `json:"featured,omitempty"`
-	Page               bool      `json:"page,omitempty"`
-	MetaTitle          string    `json:"meta_title,omitempty"`
-	MetaDescription    string    `json:"meta_description,omitempty"`
-	CreatedAt          time.Time `json:"created_at,omitempty"`
-	UpdatedAt          string    `json:"updated_at,omitempty"`
-	PublishedAt        time.Time `json:"published_at,omitempty"`
-	CustomExcerpt      string    `json:"custom_excerpt,omitempty"`
-	OGImage            string    `json:"og_image,omitempty"`
-	OGTitle            string    `json:"og_title,omitempty"`
-	OGDescription      string    `json:"og_description,omitempty"`
-	TwitterImage       string    `json:"twitter_image,omitempty"`
-	TwitterTitle       string    `json:"twitter_title,omitempty"`
-	TwitterDescription string    `json:"twitter_description,omitempty"`
-	CustomTemplate     string    `json:"custom_template,omitempty"`
-	URL                string    `json:"url,omitempty"`
-	Excerpt            string    `json:"excerpt,omitempty"`
+	ID                 string `json:"id,omitempty"`
+	UUID               string `json:"uuid,omitempty"`
+	Title              string `json:"title,omitempty"`
+	MobileDoc          string `json:"mobiledoc"`
+	Slug               string `json:"slug,omitempty"`
+	HTML               string `json:"html,omitempty"`
+	CommentID          string `json:"comment_id,omitempty"`
+	FeatureImage       string `json:"feature_image,omitempty"`
+	Featured           bool   `json:"featured,omitempty"`
+	Page               bool   `json:"page,omitempty"`
+	MetaTitle          string `json:"meta_title,omitempty"`
+	MetaDescription    string `json:"meta_description,omitempty"`
+	CreatedAt          string `json:"created_at,omitempty"`
+	UpdatedAt          string `json:"updated_at,omitempty"`
+	PublishedAt        string `json:"published_at,omitempty"`
+	CustomExcerpt      string `json:"custom_excerpt,omitempty"`
+	OGImage            string `json:"og_image,omitempty"`
+	OGTitle            string `json:"og_title,omitempty"`
+	OGDescription      string `json:"og_description,omitempty"`
+	TwitterImage       string `json:"twitter_image,omitempty"`
+	TwitterTitle       string `json:"twitter_title,omitempty"`
+	TwitterDescription string `json:"twitter_description,omitempty"`
+	CustomTemplate     string `json:"custom_template,omitempty"`
+	URL                string `json:"url,omitempty"`
+	Excerpt            string `json:"excerpt,omitempty"`
 }
 
 type ImageResponse struct {
