@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 )
@@ -21,6 +22,10 @@ func (g *Ghost) AdminGetTags() (Tags, error) {
 }
 
 func (g *Ghost) AdminCreateTags(tags Tags) error {
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
 	var ghostPostsURLSuffix = "%s/ghost/api/v3/admin/tags/?key=%s"
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
 
@@ -36,7 +41,12 @@ func (g *Ghost) AdminCreateTags(tags Tags) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("Error closing Body: %v", err)
+		}
+	}(resp.Body)
 
 	content, _ := ioutil.ReadAll(resp.Body)
 	responseBody := string(content[:])
@@ -50,6 +60,10 @@ func (g *Ghost) AdminDeleteTag(tag Tag) error {
 	var ghostPostsURLSuffix = "%s/ghost/api/v3/admin/tags/%s/?key=%s"
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, tag.Id, g.contentAPIToken)
 
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return err
@@ -61,7 +75,12 @@ func (g *Ghost) AdminDeleteTag(tag Tag) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("Error closing Body: %v", err)
+		}
+	}(resp.Body)
 
 	content, _ := ioutil.ReadAll(resp.Body)
 	responseBody := string(content[:])

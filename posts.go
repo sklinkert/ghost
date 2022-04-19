@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 )
@@ -65,6 +66,10 @@ func (g *Ghost) AdminCreatePost(post Post) error {
 		postURL = postURL + "?source=html"
 	}
 
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
 	req, err := http.NewRequest(http.MethodPost, postURL, bytes.NewBuffer(updateData))
 	if err != nil {
 		return err
@@ -76,7 +81,12 @@ func (g *Ghost) AdminCreatePost(post Post) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("Error closing body: %v\n", err)
+		}
+	}(resp.Body)
 
 	content, _ := ioutil.ReadAll(resp.Body)
 	responseBody := string(content[:])
@@ -87,6 +97,10 @@ func (g *Ghost) AdminCreatePost(post Post) error {
 }
 
 func (g *Ghost) AdminUpdatePost(post Post) error {
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
 	newPost := Posts{Posts: []Post{post}}
 	updateData, _ := json.Marshal(&newPost)
 	postUpdateURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/%s", g.url, post.ID)
@@ -101,7 +115,12 @@ func (g *Ghost) AdminUpdatePost(post Post) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("error closing body: %s", err)
+		}
+	}(resp.Body)
 
 	content, _ := ioutil.ReadAll(resp.Body)
 	responseBody := string(content[:])

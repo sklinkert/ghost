@@ -16,59 +16,70 @@ import (
 )
 
 type Ghost struct {
-	contentAPIToken string
-	jwtToken        string
-	url             string
+	adminAPIToken      string
+	contentAPIToken    string
+	jwtToken           string
+	jwtTokenExpiration time.Time
+	url                string
 }
 
 // New creates new instance of ghost API client
 func New(url, contentAPIToken, adminAPIToken string) (*Ghost, error) {
-	var jwtToken string
-	var err error
-	if adminAPIToken != "" {
-		jwtToken, err = generateJWT(adminAPIToken)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	return &Ghost{
+		adminAPIToken:   adminAPIToken,
 		contentAPIToken: contentAPIToken,
-		jwtToken:        jwtToken,
 		url:             url,
 	}, nil
 }
 
-func generateJWT(keyID string) (string, error) {
+func (g *Ghost) checkAndRenewJWT() error {
+	if g.jwtToken == "" || g.jwtTokenExpiration.Before(time.Now()) {
+		jwtToken, jwtTokenExpiration, err := generateJWT(g.adminAPIToken)
+		if err != nil {
+			return err
+		}
+		g.jwtToken = jwtToken
+		g.jwtTokenExpiration = jwtTokenExpiration
+	}
+	return nil
+}
+
+func generateJWT(keyID string) (string, time.Time, error) {
+	var now = time.Now()
+	var expiration = now.Add(5 * time.Minute)
+
 	keyParts := strings.Split(keyID, ":")
 	if len(keyParts) != 2 {
-		return "", fmt.Errorf("invalid Client.Key format")
+		return "", expiration, fmt.Errorf("invalid Client.Key format")
 	}
 	id := keyParts[0]
 	rawSecret := []byte(keyParts[1])
 	secret := make([]byte, hex.DecodedLen(len(rawSecret)))
 	_, err := hex.Decode(secret, rawSecret)
 	if err != nil {
-		return "", err
+		return "", expiration, err
 	}
 
-	now := time.Now()
 	hs256 := jwt.NewHS256(secret)
 	p := jwt.Payload{
 		Audience:       jwt.Audience{"/v3/admin/"},
-		ExpirationTime: jwt.NumericDate(now.Add(5 * time.Minute)),
+		ExpirationTime: jwt.NumericDate(expiration),
 		IssuedAt:       jwt.NumericDate(now),
 	}
 	token, err := jwt.Sign(p, hs256, jwt.KeyID(id))
 	if err != nil {
-		return "", err
+		return "", expiration, err
 	}
-	return string(token), nil
+	return string(token), expiration, nil
 }
 
 var myClient = &http.Client{Timeout: 10 * time.Second}
 
 func (g *Ghost) getJson(url string, target interface{}) error {
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
 	req, err := http.NewRequest(http.MethodGet, url, bytes.NewBuffer([]byte{}))
 	if err != nil {
 		return err
@@ -151,6 +162,10 @@ func (g *Ghost) AdminUploadImage(path string) (imageURL string, err error) {
 
 	err = writer.Close()
 	if err != nil {
+		return "", err
+	}
+
+	if err := g.checkAndRenewJWT(); err != nil {
 		return "", err
 	}
 
