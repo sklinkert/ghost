@@ -104,6 +104,6 @@ type Tag struct {
 	AccentColor        string    `json:"accent_color,omitempty"`
 	URL                string    `json:"url,omitempty"`
 	Count              struct {
-		Posts int `json:"posts"`
+		Posts int `json:"posts,omitempty"`
 	} `json:"count,omitempty"`
 }
