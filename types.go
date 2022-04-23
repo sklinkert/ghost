@@ -102,7 +102,6 @@ type Tag struct {
 	CodeInjectionFoot  string    `json:"codeinjection_foot,omitempty"`
 	CanonicalURL       string    `json:"canonical_url,omitempty"`
 	AccentColor        string    `json:"accent_color,omitempty"`
-	URL                string    `json:"url,omitempty"`
 	Count              struct {
 		Posts int `json:"posts,omitempty"`
 	} `json:"count,omitempty"`
