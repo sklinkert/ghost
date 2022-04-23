@@ -84,7 +84,7 @@ func (g *Ghost) AdminDeleteTag(tag Tag) error {
 
 	content, _ := ioutil.ReadAll(resp.Body)
 	responseBody := string(content[:])
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusNoContent {
 		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
 	}
 	return nil
