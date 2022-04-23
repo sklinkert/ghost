@@ -10,7 +10,7 @@ import (
 )
 
 func (g *Ghost) AdminGetTags() (Tags, error) {
-	var ghostPostsURLSuffix = "%s/ghost/api/v3/admin/tags/?key=%s&limit=all"
+	var ghostPostsURLSuffix = "%s/ghost/api/v3/admin/tags/?key=%s&limit=all&include=count.posts"
 	var tags Tags
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
 
