@@ -21,7 +21,7 @@ func (g *Ghost) AdminGetTags() (Tags, error) {
 	return tags, nil
 }
 
-func (g *Ghost) AdminCreateTags(tags Tags) error {
+func (g *Ghost) AdminCreateTags(tags NewTags) error {
 	if err := g.checkAndRenewJWT(); err != nil {
 		return err
 	}
