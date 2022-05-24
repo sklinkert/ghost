@@ -30,6 +30,9 @@ Ghost CMS API (ContentAPI + AdminAPI)
 * [x] Get members
 * [ ] Update member
 
+### Images
+* [x] Add image
+
 ```go
 package main
 
