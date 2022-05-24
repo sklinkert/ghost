@@ -8,7 +8,7 @@ Ghost CMS API (ContentAPI + AdminAPI)
 * [x] Upload images
 
 ### Posts
-* [ ] Add post
+* [x] Add post
 * [x] Get posts
 * [x] Update post
 * [ ] Delete post
@@ -21,10 +21,10 @@ Ghost CMS API (ContentAPI + AdminAPI)
 
 ### Tags
   
-* [ ] Add tag
-* [ ] Get tags
+* [x] Add tag
+* [x] Get tags
 * [ ] Update tag
-* [ ] Delete tag
+* [x] Delete tag
 
 ```go
 package main
@@ -37,11 +37,7 @@ import (
 func main() {
 	contentAPIToken := "837484..."
 	adminAPIToken := "90968696..."
-	ghostAPI, err := ghost.New("https://example.com", contentAPIToken, adminAPIToken)
-	if err != nil {
-		fmt.Printf("ghost.New() failed: %v\n", err)
-		return
-	}
+	ghostAPI := ghost.New("https://example.com", contentAPIToken, adminAPIToken)
 
 	posts, err := ghostAPI.GetPosts()
 	if err != nil {
