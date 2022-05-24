@@ -24,12 +24,12 @@ type Ghost struct {
 }
 
 // New creates new instance of ghost API client
-func New(url, contentAPIToken, adminAPIToken string) (*Ghost, error) {
+func New(url, contentAPIToken, adminAPIToken string) *Ghost {
 	return &Ghost{
 		adminAPIToken:   adminAPIToken,
 		contentAPIToken: contentAPIToken,
 		url:             url,
-	}, nil
+	}
 }
 
 func (g *Ghost) checkAndRenewJWT() error {
