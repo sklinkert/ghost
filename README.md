@@ -20,11 +20,15 @@ Ghost CMS API (ContentAPI + AdminAPI)
 * [ ] Delete page
 
 ### Tags
-  
 * [x] Add tag
 * [x] Get tags
 * [ ] Update tag
 * [x] Delete tag
+
+### Members
+* [x] Add member
+* [x] Get members
+* [ ] Update member
 
 ```go
 package main

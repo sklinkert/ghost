@@ -94,9 +94,12 @@ func (g *Ghost) GetPostsByTag(tag string) (Posts, error) {
 
 func (g *Ghost) AdminCreatePost(post Post) error {
 	newPost := Posts{Posts: []Post{post}}
-	updateData, _ := json.Marshal(&newPost)
-	postURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/", g.url)
+	updateData, err := json.Marshal(&newPost)
+	if err != nil {
+		return err
+	}
 
+	postURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/", g.url)
 	if post.HTML != "" {
 		postURL = postURL + "?source=html"
 	}
@@ -105,30 +108,7 @@ func (g *Ghost) AdminCreatePost(post Post) error {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, postURL, bytes.NewBuffer(updateData))
-	if err != nil {
-		return err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Ghost"+" "+g.jwtToken)
-	resp, err := myClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Printf("Error closing body: %v\n", err)
-		}
-	}(resp.Body)
-
-	content, _ := ioutil.ReadAll(resp.Body)
-	responseBody := string(content[:])
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
-	}
-	return nil
+	return g.postJson(postURL, updateData)
 }
 
 func (g *Ghost) AdminUpdatePost(post Post) error {

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gbrlsnchs/jwt/v3"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -107,5 +108,34 @@ func (g *Ghost) getJson(url string, target interface{}) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (g *Ghost) postJson(url string, data []byte) error {
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(data))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Ghost"+" "+g.jwtToken)
+	resp, err := myClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("Error closing body: %v\n", err)
+		}
+	}(resp.Body)
+
+	content, _ := ioutil.ReadAll(resp.Body)
+	responseBody := string(content[:])
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
+	}
+
 	return nil
 }

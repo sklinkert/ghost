@@ -1,8 +1,11 @@
 package ghost
 
 import (
+	"fmt"
+	"math/rand"
 	"os"
 	"testing"
+	"time"
 )
 
 func mustGetCredentialsFromEnv() (ghostURL, ghostContentAPIToken, ghostAdminAPIToken string) {
@@ -68,5 +71,46 @@ func TestCreateAndDeleteTag(t *testing.T) {
 	}
 	if len(tagsAfterDeletion.Tags) != len(originalTags.Tags) {
 		t.Fatalf("Tag count changed after deletion")
+	}
+}
+
+func TestGetMembers(t *testing.T) {
+	ghostURL, ghostContentAPIToken, ghostAdminAPIToken := mustGetCredentialsFromEnv()
+	g := New(ghostURL, ghostContentAPIToken, ghostAdminAPIToken)
+
+	members, err := g.AdminGetMembers()
+	if err != nil {
+		t.Fatalf("Error getting members: %s", err)
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	randomMailAddress := fmt.Sprintf("testmail-%d@gmx.de", rand.Int())
+	err = g.AdminCreateMember(NewMember{
+		Name:  "Test Member",
+		Email: randomMailAddress,
+	})
+	if err != nil {
+		t.Fatalf("Error creating member: %s", err)
+	}
+
+	// Fetch members again and compare size of lists
+	membersAfterCreation, err := g.AdminGetMembers()
+	if err != nil {
+		t.Fatalf("Error getting members second time: %s", err)
+	}
+	if len(membersAfterCreation.Members) == len(members.Members) {
+		t.Fatalf("Member count did not change after creation")
+	}
+
+	// Check if email matches
+	found := false
+	for _, member := range membersAfterCreation.Members {
+		if member.Email == randomMailAddress {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("Member not found in list after creation")
 	}
 }
