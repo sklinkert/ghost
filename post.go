@@ -69,7 +69,7 @@ func (g *Ghost) AdminGetPostsByTag(tag string) (Posts, error) {
 }
 
 func (g *Ghost) GetPosts() (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v2/content/posts/?key=%s&limit=all"
+	const ghostPostsURLSuffix = "%s/ghost/api/v2/content/posts/?key=%s&limit=all&include=tags"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
 
@@ -81,7 +81,7 @@ func (g *Ghost) GetPosts() (Posts, error) {
 }
 
 func (g *Ghost) GetPostsByTag(tag string) (Posts, error) {
-	var ghostPostsURLSuffix = "%s/ghost/api/v2/content/posts/?key=%s&limit=all&filter=tag:" + tag
+	var ghostPostsURLSuffix = "%s/ghost/api/v2/content/posts/?key=%s&include=tags&limit=all&filter=tag:" + tag
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
 
