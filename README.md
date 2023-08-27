@@ -22,7 +22,7 @@ Ghost CMS API (ContentAPI + AdminAPI)
 ### Tags
 * [x] Add tag
 * [x] Get tags
-* [ ] Update tag
+* [x] Update tag
 * [x] Delete tag
 
 ### Members

@@ -65,9 +65,9 @@ type NewTag struct {
 }
 
 func (g *Ghost) AdminGetTags() (Tags, error) {
-	var ghostPostsURLSuffix = "%s/ghost/api/v3/admin/tags/?key=%s&limit=all&include=count.posts"
+	var ghostTagsURLSuffix = "%s/ghost/api/v3/admin/tags/?key=%s&limit=all&include=count.posts"
 	var tags Tags
-	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
+	var url = fmt.Sprintf(ghostTagsURLSuffix, g.url, g.contentAPIToken)
 
 	if err := g.getJson(url, &tags); err != nil {
 		return tags, err
@@ -81,8 +81,8 @@ func (g *Ghost) AdminCreateTags(tags NewTags) error {
 		return err
 	}
 
-	var ghostPostsURLSuffix = "%s/ghost/api/v3/admin/tags/?key=%s"
-	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
+	var ghostTagsURLSuffix = "%s/ghost/api/v3/admin/tags/?key=%s"
+	var url = fmt.Sprintf(ghostTagsURLSuffix, g.url, g.contentAPIToken)
 
 	updateData, _ := json.Marshal(&tags)
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(updateData))
@@ -112,8 +112,8 @@ func (g *Ghost) AdminCreateTags(tags NewTags) error {
 }
 
 func (g *Ghost) AdminDeleteTag(tag Tag) error {
-	var ghostPostsURLSuffix = "%s/ghost/api/v3/admin/tags/%s/?key=%s"
-	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, tag.Id, g.contentAPIToken)
+	var ghostTagsURLSuffix = "%s/ghost/api/v3/admin/tags/%s/?key=%s"
+	var url = fmt.Sprintf(ghostTagsURLSuffix, g.url, tag.Id, g.contentAPIToken)
 
 	if err := g.checkAndRenewJWT(); err != nil {
 		return err
@@ -140,6 +140,40 @@ func (g *Ghost) AdminDeleteTag(tag Tag) error {
 	content, _ := ioutil.ReadAll(resp.Body)
 	responseBody := string(content[:])
 	if resp.StatusCode != http.StatusNoContent {
+		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
+	}
+	return nil
+}
+
+func (g *Ghost) AdminUpdateTag(tag Tag) error {
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
+	newTag := Tags{Tags: []Tag{tag}}
+	updateData, _ := json.Marshal(&newTag)
+	tagUpdateURL := fmt.Sprintf("%s/ghost/api/v3/admin/tags/%s", g.url, tag.Id)
+	req, err := http.NewRequest(http.MethodPut, tagUpdateURL, bytes.NewBuffer(updateData))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Ghost"+" "+g.jwtToken)
+	resp, err := myClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("error closing body: %s", err)
+		}
+	}(resp.Body)
+
+	content, _ := ioutil.ReadAll(resp.Body)
+	responseBody := string(content[:])
+	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
 	}
 	return nil
