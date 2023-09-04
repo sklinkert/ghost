@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
@@ -38,7 +38,7 @@ func (g *Ghost) AdminUploadImage(path string) (imageURL string, err error) {
 	if err != nil {
 		return "", err
 	}
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := io.ReadAll(file)
 	if err != nil {
 		return "", err
 	}
@@ -96,7 +96,7 @@ func (g *Ghost) AdminUploadImage(path string) (imageURL string, err error) {
 		}
 	}()
 
-	content, err := ioutil.ReadAll(response.Body)
+	content, err := io.ReadAll(response.Body)
 	if err != nil {
 		return "", err
 	}

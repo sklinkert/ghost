@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -103,7 +102,7 @@ func (g *Ghost) AdminCreateTags(tags NewTags) error {
 		}
 	}(resp.Body)
 
-	content, _ := ioutil.ReadAll(resp.Body)
+	content, _ := io.ReadAll(resp.Body)
 	responseBody := string(content[:])
 	if resp.StatusCode != http.StatusCreated {
 		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
@@ -137,7 +136,7 @@ func (g *Ghost) AdminDeleteTag(tag Tag) error {
 		}
 	}(resp.Body)
 
-	content, _ := ioutil.ReadAll(resp.Body)
+	content, _ := io.ReadAll(resp.Body)
 	responseBody := string(content[:])
 	if resp.StatusCode != http.StatusNoContent {
 		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
@@ -171,7 +170,7 @@ func (g *Ghost) AdminUpdateTag(tag Tag) error {
 		}
 	}(resp.Body)
 
-	content, _ := ioutil.ReadAll(resp.Body)
+	content, _ := io.ReadAll(resp.Body)
 	responseBody := string(content[:])
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
