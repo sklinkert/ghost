@@ -85,7 +85,7 @@ func TestGetMembers(t *testing.T) {
 
 	rand.Seed(time.Now().UnixNano())
 	randomMailAddress := fmt.Sprintf("testmail-%d@gmx.de", rand.Int())
-	err = g.AdminCreateMember(NewMember{
+	_, err = g.AdminCreateMember(NewMember{
 		Name:  "Test Member",
 		Email: randomMailAddress,
 	})

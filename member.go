@@ -83,21 +83,22 @@ func (g *Ghost) AdminGetMembers() (Members, error) {
 	return membersResponse, nil
 }
 
-func (g *Ghost) AdminCreateMember(member NewMember) error {
+func (g *Ghost) AdminCreateMember(member NewMember) (Members, error) {
 	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/members/?key=%s"
+	var members Members
 
 	if err := g.checkAndRenewJWT(); err != nil {
-		return err
+		return members, err
 	}
 
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.adminAPIToken)
 	data, err := json.Marshal(&NewMembers{Members: []NewMember{member}})
 	if err != nil {
-		return err
+		return members, err
 	}
 
-	if err := g.postJson(url, data); err != nil {
-		return err
+	if err := g.postJson(url, data, &members); err != nil {
+		return members, err
 	}
-	return nil
+	return members, nil
 }
