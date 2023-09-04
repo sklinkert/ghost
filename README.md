@@ -1,5 +1,6 @@
-# ghost
-Ghost CMS API (ContentAPI + AdminAPI)
+# Go Client for Ghost Blogs 
+
+[Ghost](https://ghost.org/) Client (ContentAPI + AdminAPI)
 
 ## Supported features
 
