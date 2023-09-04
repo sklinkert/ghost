@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -92,11 +91,13 @@ func (g *Ghost) GetPostsByTag(tag string) (Posts, error) {
 	return posts, nil
 }
 
-func (g *Ghost) AdminCreatePost(post Post) error {
+func (g *Ghost) AdminCreatePost(post Post) (Posts, error) {
+	var posts Posts
+
 	newPost := Posts{Posts: []Post{post}}
 	updateData, err := json.Marshal(&newPost)
 	if err != nil {
-		return err
+		return posts, err
 	}
 
 	postURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/", g.url)
@@ -105,10 +106,14 @@ func (g *Ghost) AdminCreatePost(post Post) error {
 	}
 
 	if err := g.checkAndRenewJWT(); err != nil {
-		return err
+		return posts, err
 	}
 
-	return g.postJson(postURL, updateData)
+	if err := g.postJson(postURL, updateData, &posts); err != nil {
+		return posts, err
+	}
+
+	return posts, nil
 }
 
 func (g *Ghost) AdminUpdatePost(post Post) error {
@@ -137,7 +142,7 @@ func (g *Ghost) AdminUpdatePost(post Post) error {
 		}
 	}(resp.Body)
 
-	content, _ := ioutil.ReadAll(resp.Body)
+	content, _ := io.ReadAll(resp.Body)
 	responseBody := string(content[:])
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)

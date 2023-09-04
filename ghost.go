@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/gbrlsnchs/jwt/v3"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -98,7 +97,15 @@ func (g *Ghost) getJson(url string, target interface{}) error {
 		}
 	}()
 
-	content, _ := ioutil.ReadAll(resp.Body)
+	err = parsePostsResponse(resp, err, target)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func parsePostsResponse(resp *http.Response, err error, target interface{}) error {
+	content, _ := io.ReadAll(resp.Body)
 	responseBody := string(content[:])
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
@@ -111,7 +118,7 @@ func (g *Ghost) getJson(url string, target interface{}) error {
 	return nil
 }
 
-func (g *Ghost) postJson(url string, data []byte) error {
+func (g *Ghost) postJson(url string, data []byte, target interface{}) error {
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(data))
 	if err != nil {
 		return err
@@ -130,11 +137,16 @@ func (g *Ghost) postJson(url string, data []byte) error {
 		}
 	}(resp.Body)
 
-	content, _ := ioutil.ReadAll(resp.Body)
+	content, _ := io.ReadAll(resp.Body)
 	responseBody := string(content[:])
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
+	}
+
+	err = parsePostsResponse(resp, err, target)
+	if err != nil {
+		return err
 	}
 
 	return nil
