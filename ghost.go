@@ -97,17 +97,18 @@ func (g *Ghost) getJson(url string, target interface{}) error {
 		}
 	}()
 
-	err = parsePostsResponse(resp, err, target)
+	err = parsePostResponse(resp, err, target)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func parsePostsResponse(resp *http.Response, err error, target interface{}) error {
+func parsePostResponse(resp *http.Response, err error, target interface{}) error {
 	content, _ := io.ReadAll(resp.Body)
 	responseBody := string(content[:])
-	if resp.StatusCode != http.StatusOK {
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
 	}
 
@@ -137,14 +138,7 @@ func (g *Ghost) postJson(url string, data []byte, target interface{}) error {
 		}
 	}(resp.Body)
 
-	content, _ := io.ReadAll(resp.Body)
-	responseBody := string(content[:])
-
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
-	}
-
-	err = parsePostsResponse(resp, err, target)
+	err = parsePostResponse(resp, err, target)
 	if err != nil {
 		return err
 	}
