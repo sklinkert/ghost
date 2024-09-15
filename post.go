@@ -124,6 +124,10 @@ func (g *Ghost) AdminUpdatePost(post Post) error {
 	newPost := Posts{Posts: []Post{post}}
 	updateData, _ := json.Marshal(&newPost)
 	postUpdateURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/%s", g.url, post.ID)
+	if post.HTML != "" {
+		postUpdateURL = postUpdateURL + "?source=html"
+	}
+	
 	req, err := http.NewRequest(http.MethodPut, postUpdateURL, bytes.NewBuffer(updateData))
 	if err != nil {
 		return err
