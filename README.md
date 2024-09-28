@@ -1,4 +1,6 @@
-# Go Client for Ghost Blogs 
+# Unofficial Go Client for Ghost Blogs 
+
+Not affiliated in any way with Ghost.org.
 
 [Ghost](https://ghost.org/) Client (ContentAPI + AdminAPI)
 
