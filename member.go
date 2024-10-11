@@ -72,10 +72,6 @@ func (g *Ghost) AdminGetMembers() (Members, error) {
 	var membersResponse Members
 	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/members/?key=%s&limit=all"
 
-	if err := g.checkAndRenewJWT(); err != nil {
-		return membersResponse, err
-	}
-
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.adminAPIToken)
 	if err := g.getJson(url, &membersResponse); err != nil {
 		return membersResponse, err
@@ -86,10 +82,6 @@ func (g *Ghost) AdminGetMembers() (Members, error) {
 func (g *Ghost) AdminCreateMember(member NewMember) (Members, error) {
 	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/members/?key=%s"
 	var members Members
-
-	if err := g.checkAndRenewJWT(); err != nil {
-		return members, err
-	}
 
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.adminAPIToken)
 	data, err := json.Marshal(&NewMembers{Members: []NewMember{member}})

@@ -105,10 +105,6 @@ func (g *Ghost) AdminCreatePost(post Post) (Posts, error) {
 		postURL = postURL + "?source=html"
 	}
 
-	if err := g.checkAndRenewJWT(); err != nil {
-		return posts, err
-	}
-
 	if err := g.postJson(postURL, updateData, &posts); err != nil {
 		return posts, err
 	}
@@ -117,10 +113,6 @@ func (g *Ghost) AdminCreatePost(post Post) (Posts, error) {
 }
 
 func (g *Ghost) AdminUpdatePost(post Post) error {
-	if err := g.checkAndRenewJWT(); err != nil {
-		return err
-	}
-
 	newPost := Posts{Posts: []Post{post}}
 	updateData, _ := json.Marshal(&newPost)
 	postUpdateURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/%s", g.url, post.ID)

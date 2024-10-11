@@ -120,6 +120,10 @@ func parsePostResponse(resp *http.Response, err error, target interface{}) error
 }
 
 func (g *Ghost) postJson(url string, data []byte, target interface{}) error {
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(data))
 	if err != nil {
 		return err

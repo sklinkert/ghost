@@ -76,10 +76,6 @@ func (g *Ghost) AdminGetTags() (Tags, error) {
 }
 
 func (g *Ghost) AdminCreateTags(tags NewTags) error {
-	if err := g.checkAndRenewJWT(); err != nil {
-		return err
-	}
-
 	var ghostTagsURLSuffix = "%s/ghost/api/v3/admin/tags/?key=%s"
 	var url = fmt.Sprintf(ghostTagsURLSuffix, g.url, g.contentAPIToken)
 
@@ -114,10 +110,6 @@ func (g *Ghost) AdminDeleteTag(tag Tag) error {
 	var ghostTagsURLSuffix = "%s/ghost/api/v3/admin/tags/%s/?key=%s"
 	var url = fmt.Sprintf(ghostTagsURLSuffix, g.url, tag.Id, g.contentAPIToken)
 
-	if err := g.checkAndRenewJWT(); err != nil {
-		return err
-	}
-
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return err
@@ -145,10 +137,6 @@ func (g *Ghost) AdminDeleteTag(tag Tag) error {
 }
 
 func (g *Ghost) AdminUpdateTag(tag Tag) error {
-	if err := g.checkAndRenewJWT(); err != nil {
-		return err
-	}
-
 	newTag := Tags{Tags: []Tag{tag}}
 	updateData, _ := json.Marshal(&newTag)
 	tagUpdateURL := fmt.Sprintf("%s/ghost/api/v3/admin/tags/%s", g.url, tag.Id)
