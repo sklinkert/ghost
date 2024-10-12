@@ -33,7 +33,9 @@ func New(url, contentAPIToken, adminAPIToken string) *Ghost {
 }
 
 func (g *Ghost) checkAndRenewJWT() error {
-	if g.jwtToken == "" || g.jwtTokenExpiration.Before(time.Now()) {
+	var timeoutWithBuffer = g.jwtTokenExpiration.Add(-1 * time.Minute)
+
+	if g.jwtToken == "" || g.jwtTokenExpiration.Before(timeoutWithBuffer) {
 		jwtToken, jwtTokenExpiration, err := generateJWT(g.adminAPIToken)
 		if err != nil {
 			return err
