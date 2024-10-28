@@ -8,6 +8,13 @@ import (
 	"net/http"
 )
 
+type SourceType string
+
+const (
+	SourceMobileDoc SourceType = "mobiledoc" // default
+	SourceHTML      SourceType = "html"
+)
+
 type Post struct {
 	ID                 string `json:"id,omitempty"`
 	UUID               string `json:"uuid,omitempty"`
@@ -136,7 +143,7 @@ func (g *Ghost) AdminCreatePost(post Post) (Posts, error) {
 	return posts, nil
 }
 
-func (g *Ghost) AdminUpdatePost(post Post) error {
+func (g *Ghost) AdminUpdatePost(post Post, sourceType SourceType) error {
 	if err := g.checkAndRenewJWT(); err != nil {
 		return err
 	}
@@ -144,8 +151,9 @@ func (g *Ghost) AdminUpdatePost(post Post) error {
 	newPost := Posts{Posts: []Post{post}}
 	updateData, _ := json.Marshal(&newPost)
 	postUpdateURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/%s", g.url, post.ID)
-	if post.HTML != "" {
-		postUpdateURL = postUpdateURL + "?source=html"
+
+	if sourceType != "" {
+		postUpdateURL = postUpdateURL + "?source=" + string(sourceType)
 	}
 
 	req, err := http.NewRequest(http.MethodPut, postUpdateURL, bytes.NewBuffer(updateData))
