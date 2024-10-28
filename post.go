@@ -44,9 +44,21 @@ type Posts struct {
 }
 
 func (g *Ghost) AdminGetPosts() (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all"
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&include=tags"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
+
+	if err := g.getJson(url, &posts); err != nil {
+		return posts, err
+	}
+
+	return posts, nil
+}
+
+func (g *Ghost) AdminGetPost(postId string) (Posts, error) {
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags"
+	var posts Posts
+	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, postId, g.contentAPIToken)
 
 	if err := g.getJson(url, &posts); err != nil {
 		return posts, err
@@ -71,6 +83,18 @@ func (g *Ghost) GetPosts() (Posts, error) {
 	const ghostPostsURLSuffix = "%s/ghost/api/v2/content/posts/?key=%s&limit=all&include=tags"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
+
+	if err := g.getJson(url, &posts); err != nil {
+		return posts, err
+	}
+
+	return posts, nil
+}
+
+func (g *Ghost) GetPost(postId string) (Posts, error) {
+	const ghostPostsURLSuffix = "%s/ghost/api/v2/content/posts/%s/?key=%s&include=tags"
+	var posts Posts
+	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, postId, g.contentAPIToken)
 
 	if err := g.getJson(url, &posts); err != nil {
 		return posts, err
