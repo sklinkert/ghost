@@ -20,6 +20,7 @@ type PostRevision struct {
 	ID          string `json:"id,omitempty"`
 	PostID      string `json:"post_id,omitempty"`
 	Lexical     string `json:"lexical,omitempty"`
+	MobileDoc   string `json:"mobiledoc"`
 	CreatedAtTs int64  `json:"created_at_ts,omitempty"`
 	CreatedAt   string `json:"created_at,omitempty"`
 	Title       string `json:"title,omitempty"`
@@ -53,6 +54,7 @@ type Post struct {
 	UUID               string         `json:"uuid,omitempty"`
 	Title              string         `json:"title,omitempty"`
 	Lexical            string         `json:"lexical,omitempty"`
+	MobileDoc          string         `json:"mobiledoc"`
 	Slug               string         `json:"slug,omitempty"`
 	HTML               string         `json:"html,omitempty"`
 	CommentID          string         `json:"comment_id,omitempty"`
@@ -85,7 +87,7 @@ type Posts struct {
 }
 
 func (g *Ghost) AdminGetPosts() (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&include=tags&formats=html,lexical"
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&include=tags&formats=html,lexical,mobiledoc"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
 
@@ -97,7 +99,7 @@ func (g *Ghost) AdminGetPosts() (Posts, error) {
 }
 
 func (g *Ghost) AdminGetPost(postId string) (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags,authors,authors.roles,email,tiers,newsletter,count.clicks,post_revisions,post_revisions.author&formats=html,lexical,lexical"
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags,authors,authors.roles,email,tiers,newsletter,count.clicks,post_revisions,post_revisions.author&formats=html,lexical,mobiledoc"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, postId, g.contentAPIToken)
 
@@ -187,7 +189,7 @@ func (g *Ghost) AdminUpdatePost(post Post, sourceType SourceType) error {
 	postUpdateURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/%s", g.url, post.ID)
 
 	if sourceType != "" {
-		postUpdateURL = postUpdateURL + "?source=" + string(sourceType)
+		postUpdateURL = postUpdateURL + "?save_revision=1&source=" + string(sourceType)
 	}
 
 	req, err := http.NewRequest(http.MethodPut, postUpdateURL, bytes.NewBuffer(updateData))
