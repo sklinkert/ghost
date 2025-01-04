@@ -51,7 +51,7 @@ type Posts struct {
 }
 
 func (g *Ghost) AdminGetPosts() (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&include=tags"
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&include=tags&formats=html,mobiledoc"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
 
@@ -63,7 +63,7 @@ func (g *Ghost) AdminGetPosts() (Posts, error) {
 }
 
 func (g *Ghost) AdminGetPost(postId string) (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags"
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags&formats=html,mobiledoc"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, postId, g.contentAPIToken)
 
