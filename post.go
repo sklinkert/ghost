@@ -15,35 +15,68 @@ const (
 	SourceHTML      SourceType = "html"
 )
 
+type PostRevision struct {
+	ID          string `json:"id,omitempty"`
+	PostID      string `json:"post_id,omitempty"`
+	Lexical     string `json:"lexical,omitempty"`
+	CreatedAtTs int64  `json:"created_at_ts,omitempty"`
+	CreatedAt   string `json:"created_at,omitempty"`
+	Title       string `json:"title,omitempty"`
+	PostStatus  string `json:"post_status,omitempty"`
+	Reason      string `json:"reason,omitempty"`
+	Author      struct {
+		ID              string `json:"id,omitempty"`
+		Name            string `json:"name,omitempty"`
+		Slug            string `json:"slug,omitempty"`
+		Email           string `json:"email,omitempty"`
+		ProfileImage    string `json:"profile_image,omitempty"`
+		CoverImage      string `json:"cover_image,omitempty"`
+		Bio             string `json:"bio,omitempty"`
+		Website         string `json:"website,omitempty"`
+		Location        string `json:"location,omitempty"`
+		Facebook        string `json:"facebook,omitempty"`
+		Twitter         string `json:"twitter,omitempty"`
+		Accessibility   string `json:"accessibility,omitempty"`
+		Status          string `json:"status,omitempty"`
+		MetaTitle       string `json:"meta_title,omitempty"`
+		MetaDescription string `json:"meta_description,omitempty"`
+		Tour            string `json:"tour,omitempty"`
+		LastSeen        string `json:"last_seen,omitempty"`
+		CreatedAt       string `json:"created_at,omitempty"`
+		UpdatedAt       string `json:"updated_at,omitempty"`
+	} `json:"author,omitempty"`
+}
+
 type Post struct {
-	ID                 string `json:"id,omitempty"`
-	UUID               string `json:"uuid,omitempty"`
-	Title              string `json:"title,omitempty"`
-	MobileDoc          string `json:"mobiledoc,omitempty"`
-	Slug               string `json:"slug,omitempty"`
-	HTML               string `json:"html,omitempty"`
-	CommentID          string `json:"comment_id,omitempty"`
-	FeatureImage       string `json:"feature_image,omitempty"`
-	Featured           bool   `json:"featured,omitempty"`
-	Page               bool   `json:"page,omitempty"`
-	MetaTitle          string `json:"meta_title,omitempty"`
-	MetaDescription    string `json:"meta_description,omitempty"`
-	CreatedAt          string `json:"created_at,omitempty"`   // "2022-01-05T22:39:28.000Z"
-	UpdatedAt          string `json:"updated_at,omitempty"`   // "2022-04-02T16:01:24.000Z"
-	PublishedAt        string `json:"published_at,omitempty"` // "2022-01-19T06:31:00.000Z"
-	CustomExcerpt      string `json:"custom_excerpt,omitempty"`
-	OGImage            string `json:"og_image,omitempty"`
-	OGTitle            string `json:"og_title,omitempty"`
-	OGDescription      string `json:"og_description,omitempty"`
-	TwitterImage       string `json:"twitter_image,omitempty"`
-	TwitterTitle       string `json:"twitter_title,omitempty"`
-	TwitterDescription string `json:"twitter_description,omitempty"`
-	CustomTemplate     string `json:"custom_template,omitempty"`
-	URL                string `json:"url,omitempty"`
-	Excerpt            string `json:"excerpt,omitempty"`
-	Tags               []Tag  `json:"tags,omitempty"`
-	Status             string `json:"status,omitempty"`     // "published"
-	Visibility         string `json:"visibility,omitempty"` // "public"
+	ID                 string         `json:"id,omitempty"`
+	UUID               string         `json:"uuid,omitempty"`
+	Title              string         `json:"title,omitempty"`
+	MobileDoc          string         `json:"mobiledoc,omitempty"`
+	Slug               string         `json:"slug,omitempty"`
+	HTML               string         `json:"html,omitempty"`
+	CommentID          string         `json:"comment_id,omitempty"`
+	FeatureImage       string         `json:"feature_image,omitempty"`
+	Featured           bool           `json:"featured,omitempty"`
+	Page               bool           `json:"page,omitempty"`
+	MetaTitle          string         `json:"meta_title,omitempty"`
+	MetaDescription    string         `json:"meta_description,omitempty"`
+	CreatedAt          string         `json:"created_at,omitempty"`   // "2022-01-05T22:39:28.000Z"
+	UpdatedAt          string         `json:"updated_at,omitempty"`   // "2022-04-02T16:01:24.000Z"
+	PublishedAt        string         `json:"published_at,omitempty"` // "2022-01-19T06:31:00.000Z"
+	CustomExcerpt      string         `json:"custom_excerpt,omitempty"`
+	OGImage            string         `json:"og_image,omitempty"`
+	OGTitle            string         `json:"og_title,omitempty"`
+	OGDescription      string         `json:"og_description,omitempty"`
+	TwitterImage       string         `json:"twitter_image,omitempty"`
+	TwitterTitle       string         `json:"twitter_title,omitempty"`
+	TwitterDescription string         `json:"twitter_description,omitempty"`
+	CustomTemplate     string         `json:"custom_template,omitempty"`
+	URL                string         `json:"url,omitempty"`
+	Excerpt            string         `json:"excerpt,omitempty"`
+	Tags               []Tag          `json:"tags,omitempty"`
+	Status             string         `json:"status,omitempty"`     // "published"
+	Visibility         string         `json:"visibility,omitempty"` // "public"
+	PostRevisions      []PostRevision `json:"post_revisions,omitempty"`
 }
 
 type Posts struct {
@@ -63,7 +96,7 @@ func (g *Ghost) AdminGetPosts() (Posts, error) {
 }
 
 func (g *Ghost) AdminGetPost(postId string) (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags&formats=html,mobiledoc"
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags,authors,authors.roles,email,tiers,newsletter,count.clicks,post_revisions,post_revisions.author&formats=mobiledoc,lexical"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, postId, g.contentAPIToken)
 
