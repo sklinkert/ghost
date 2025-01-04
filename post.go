@@ -11,8 +11,9 @@ import (
 type SourceType string
 
 const (
-	SourceMobileDoc SourceType = "mobiledoc" // default
-	SourceHTML      SourceType = "html"
+	Sourcelexical SourceType = "lexical" // deprecated
+	SourceHTML    SourceType = "html"
+	SourceLexical SourceType = "lexical" // default
 )
 
 type PostRevision struct {
@@ -51,7 +52,7 @@ type Post struct {
 	ID                 string         `json:"id,omitempty"`
 	UUID               string         `json:"uuid,omitempty"`
 	Title              string         `json:"title,omitempty"`
-	MobileDoc          string         `json:"mobiledoc,omitempty"`
+	Lexical            string         `json:"lexical,omitempty"`
 	Slug               string         `json:"slug,omitempty"`
 	HTML               string         `json:"html,omitempty"`
 	CommentID          string         `json:"comment_id,omitempty"`
@@ -84,7 +85,7 @@ type Posts struct {
 }
 
 func (g *Ghost) AdminGetPosts() (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&include=tags&formats=html,mobiledoc"
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&include=tags&formats=html,lexical"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
 
@@ -96,7 +97,7 @@ func (g *Ghost) AdminGetPosts() (Posts, error) {
 }
 
 func (g *Ghost) AdminGetPost(postId string) (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags,authors,authors.roles,email,tiers,newsletter,count.clicks,post_revisions,post_revisions.author&formats=html,mobiledoc,lexical"
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags,authors,authors.roles,email,tiers,newsletter,count.clicks,post_revisions,post_revisions.author&formats=html,lexical,lexical"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, postId, g.contentAPIToken)
 
@@ -108,7 +109,7 @@ func (g *Ghost) AdminGetPost(postId string) (Posts, error) {
 }
 
 func (g *Ghost) AdminGetPostsByTag(tag string) (Posts, error) {
-	var ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&formats=html,mobiledoc&filter=tag:" + tag
+	var ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&formats=html,lexical&filter=tag:" + tag
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
 
