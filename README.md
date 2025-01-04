@@ -60,7 +60,7 @@ func main() {
 
 		// Update existing post
 		post.Title = "new title"
-		if err := ghostAPI.AdminUpdatePost(post); err != nil {
+		if err := ghostAPI.AdminUpdatePost(post, ""); err != nil {
 			fmt.Printf("update failed: %v\n", err)
 			break
 		}
@@ -72,5 +72,18 @@ func main() {
 		fmt.Printf("Image upload failed: %v\n", err)
 	}
 	fmt.Println(imageURL)
+
+
+	// Get post by id
+		posts, err := ghostAPI.AdminGetPost("628f557f0a8ce9486eb37623")
+	if err != nil {
+		fmt.Printf("cannot get posts from ghost api: %v\n", err)
+		return
+	}
+
+	for _, post := range posts.Posts {
+		fmt.Println(post.Title)
+		fmt.Printf("revision: %+v\n", post.PostRevisions)
+	}
 }
 ```
