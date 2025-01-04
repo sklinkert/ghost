@@ -96,7 +96,7 @@ func (g *Ghost) AdminGetPosts() (Posts, error) {
 }
 
 func (g *Ghost) AdminGetPost(postId string) (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags,authors,authors.roles,email,tiers,newsletter,count.clicks,post_revisions,post_revisions.author&formats=mobiledoc,lexical"
+	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/%s/?key=%s&include=tags,authors,authors.roles,email,tiers,newsletter,count.clicks,post_revisions,post_revisions.author&formats=html,mobiledoc,lexical"
 	var posts Posts
 	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, postId, g.contentAPIToken)
 
