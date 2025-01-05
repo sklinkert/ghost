@@ -20,7 +20,7 @@ type PostRevision struct {
 	ID          string `json:"id,omitempty"`
 	PostID      string `json:"post_id,omitempty"`
 	Lexical     string `json:"lexical,omitempty"`
-	MobileDoc   string `json:"mobiledoc"`
+	MobileDoc   string `json:"mobiledoc,omitempty"`
 	CreatedAtTs int64  `json:"created_at_ts,omitempty"`
 	CreatedAt   string `json:"created_at,omitempty"`
 	Title       string `json:"title,omitempty"`
@@ -54,7 +54,7 @@ type Post struct {
 	UUID               string         `json:"uuid,omitempty"`
 	Title              string         `json:"title,omitempty"`
 	Lexical            string         `json:"lexical,omitempty"`
-	MobileDoc          string         `json:"mobiledoc"`
+	MobileDoc          string         `json:"mobiledoc,omitempty"`
 	Slug               string         `json:"slug,omitempty"`
 	HTML               string         `json:"html,omitempty"`
 	CommentID          string         `json:"comment_id,omitempty"`
