@@ -188,8 +188,9 @@ func (g *Ghost) AdminUpdatePost(post Post, sourceType SourceType) error {
 	updateData, _ := json.Marshal(&newPost)
 	postUpdateURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/%s", g.url, post.ID)
 
+	postUpdateURL = postUpdateURL + "?save_revision=1"
 	if sourceType != "" {
-		postUpdateURL = postUpdateURL + "?save_revision=1&source=" + string(sourceType)
+		postUpdateURL = postUpdateURL + "&source=" + string(sourceType)
 	}
 
 	req, err := http.NewRequest(http.MethodPut, postUpdateURL, bytes.NewBuffer(updateData))
