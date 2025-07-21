@@ -42,12 +42,22 @@ package main
 import (
 	"fmt"
 	"github.com/sklinkert/ghost"
+	"net/http"
+	"time"
 )
 
 func main() {
 	contentAPIToken := "837484..."
 	adminAPIToken := "90968696..."
+	
+	// Default usage
 	ghostAPI := ghost.New("https://example.com", contentAPIToken, adminAPIToken)
+	
+	// With custom HTTP client
+	customClient := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	ghostAPIWithCustomClient := ghost.New("https://example.com", contentAPIToken, adminAPIToken, customClient)
 
 	posts, err := ghostAPI.GetPosts()
 	if err != nil {

@@ -200,7 +200,7 @@ func (g *Ghost) AdminUpdatePost(post Post, sourceType SourceType) error {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Ghost"+" "+g.jwtToken)
-	resp, err := myClient.Do(req)
+	resp, err := g.client.Do(req)
 	if err != nil {
 		return err
 	}

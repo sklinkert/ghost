@@ -21,15 +21,25 @@ type Ghost struct {
 	jwtToken           string
 	jwtTokenExpiration time.Time
 	url                string
+	client             *http.Client
 }
 
 // New creates new instance of ghost API client
-func New(url, contentAPIToken, adminAPIToken string) *Ghost {
-	return &Ghost{
+func New(url, contentAPIToken, adminAPIToken string, client ...*http.Client) *Ghost {
+	g := &Ghost{
 		adminAPIToken:   adminAPIToken,
 		contentAPIToken: contentAPIToken,
 		url:             url,
 	}
+	
+	// Use custom client if provided, otherwise use default client
+	if len(client) > 0 && client[0] != nil {
+		g.client = client[0]
+	} else {
+		g.client = defaultHTTPClient
+	}
+	
+	return g
 }
 
 func (g *Ghost) checkAndRenewJWT() error {
@@ -76,7 +86,7 @@ func generateJWT(keyID string) (string, time.Time, error) {
 	return string(token), expiration, nil
 }
 
-var myClient = &http.Client{Timeout: 10 * time.Second}
+var defaultHTTPClient = &http.Client{Timeout: 10 * time.Second}
 
 func (g *Ghost) getJson(url string, target interface{}) error {
 	if err := g.checkAndRenewJWT(); err != nil {
@@ -90,7 +100,7 @@ func (g *Ghost) getJson(url string, target interface{}) error {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Ghost"+" "+g.jwtToken)
-	resp, err := myClient.Do(req)
+	resp, err := g.client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -134,7 +144,7 @@ func (g *Ghost) postJson(url string, data []byte, target interface{}) error {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Ghost"+" "+g.jwtToken)
-	resp, err := myClient.Do(req)
+	resp, err := g.client.Do(req)
 	if err != nil {
 		return err
 	}
