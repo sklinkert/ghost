@@ -218,3 +218,36 @@ func (g *Ghost) AdminUpdatePost(post Post, sourceType SourceType) error {
 	}
 	return nil
 }
+
+func (g *Ghost) AdminDeletePost(postId string) error {
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
+	deleteURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/%s/", g.url, postId)
+
+	req, err := http.NewRequest(http.MethodDelete, deleteURL, nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Ghost"+" "+g.jwtToken)
+	resp, err := g.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("error closing body: %s", err)
+		}
+	}(resp.Body)
+
+	content, _ := io.ReadAll(resp.Body)
+	responseBody := string(content[:])
+	if resp.StatusCode != http.StatusNoContent {
+		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
+	}
+	return nil
+}
