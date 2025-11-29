@@ -118,15 +118,15 @@ func TestGetMembers(t *testing.T) {
 
 func TestCustomHTTPClient(t *testing.T) {
 	ghostURL, ghostContentAPIToken, ghostAdminAPIToken := mustGetCredentialsFromEnv()
-	
+
 	// Create a custom HTTP client with a non-default timeout
 	customClient := &http.Client{
 		Timeout: 30 * time.Second,
 	}
-	
+
 	// Initialize Ghost with custom HTTP client
 	g := New(ghostURL, ghostContentAPIToken, ghostAdminAPIToken, customClient)
-	
+
 	// Test that we can still use the API with custom client
 	_, err := g.AdminGetTags()
 	if err != nil {

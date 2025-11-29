@@ -31,14 +31,14 @@ func New(url, contentAPIToken, adminAPIToken string, client ...*http.Client) *Gh
 		contentAPIToken: contentAPIToken,
 		url:             url,
 	}
-	
+
 	// Use custom client if provided, otherwise use default client
 	if len(client) > 0 && client[0] != nil {
 		g.client = client[0]
 	} else {
 		g.client = defaultHTTPClient
 	}
-	
+
 	return g
 }
 
