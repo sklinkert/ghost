@@ -139,3 +139,33 @@ func (g *Ghost) AdminUpdatePage(page Page, sourceType SourceType) error {
 	}
 	return nil
 }
+
+func (g *Ghost) AdminDeletePage(pageId string) error {
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
+	deleteURL := fmt.Sprintf("%s/ghost/api/v3/admin/pages/%s/", g.url, pageId)
+
+	req, err := http.NewRequest(http.MethodDelete, deleteURL, nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Ghost "+g.jwtToken)
+	resp, err := g.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
+
+	content, _ := io.ReadAll(resp.Body)
+	responseBody := string(content)
+	if resp.StatusCode != http.StatusNoContent {
+		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
+	}
+	return nil
+}
