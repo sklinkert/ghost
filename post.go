@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 type SourceType string
@@ -250,4 +251,22 @@ func (g *Ghost) AdminDeletePost(postId string) error {
 		return fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, responseBody)
 	}
 	return nil
+}
+
+// AdminSearchPosts searches for posts matching the query in title or custom_excerpt.
+// Uses Ghost Admin API filter to search server-side across all posts.
+func (g *Ghost) AdminSearchPosts(query string) (Posts, error) {
+	var posts Posts
+
+	// Search in title OR custom_excerpt using Ghost filter syntax
+	// The ~'query' syntax does a case-insensitive contains search
+	filter := fmt.Sprintf("title:~'%s',custom_excerpt:~'%s'", query, query)
+	searchURL := fmt.Sprintf("%s/ghost/api/v3/admin/posts/?filter=%s&include=tags&formats=html&limit=all",
+		g.url, url.QueryEscape(filter))
+
+	if err := g.getJson(searchURL, &posts); err != nil {
+		return posts, err
+	}
+
+	return posts, nil
 }
