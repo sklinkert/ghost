@@ -10,7 +10,19 @@ import (
 )
 
 type Tags struct {
-	Tags []Tag `json:"tags"`
+	Tags []Tag      `json:"tags"`
+	Meta Pagination `json:"meta,omitempty"`
+}
+
+type Pagination struct {
+	Pagination struct {
+		Page  int  `json:"page"`
+		Limit int  `json:"limit"`
+		Pages int  `json:"pages"`
+		Total int  `json:"total"`
+		Next  *int `json:"next"`
+		Prev  *int `json:"prev"`
+	} `json:"pagination"`
 }
 
 type Tag struct {
@@ -64,20 +76,36 @@ type NewTag struct {
 }
 
 func (g *Ghost) AdminGetTags() (Tags, error) {
-	var ghostTagsURLSuffix = "%s/ghost/api/v3/admin/tags/?key=%s&limit=all&include=count.posts"
-	var tags Tags
-	var url = fmt.Sprintf(ghostTagsURLSuffix, g.url, g.contentAPIToken)
+	const limit = 100
+	var allTags Tags
+	page := 1
 
-	if err := g.getJson(url, &tags); err != nil {
-		return tags, err
+	for {
+		url := fmt.Sprintf("%s/ghost/api/v3/admin/tags/?limit=%d&page=%d&include=count.posts", g.url, limit, page)
+
+		var pageTags Tags
+		if err := g.getJson(url, &pageTags); err != nil {
+			return allTags, err
+		}
+
+		allTags.Tags = append(allTags.Tags, pageTags.Tags...)
+
+		if pageTags.Meta.Pagination.Next == nil {
+			break
+		}
+		page = *pageTags.Meta.Pagination.Next
 	}
 
-	return tags, nil
+	return allTags, nil
 }
 
 func (g *Ghost) AdminCreateTags(tags NewTags) error {
-	var ghostTagsURLSuffix = "%s/ghost/api/v3/admin/tags/?key=%s"
-	var url = fmt.Sprintf(ghostTagsURLSuffix, g.url, g.contentAPIToken)
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
+	var ghostTagsURLSuffix = "%s/ghost/api/v3/admin/tags/"
+	var url = fmt.Sprintf(ghostTagsURLSuffix, g.url)
 
 	updateData, _ := json.Marshal(&tags)
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(updateData))
@@ -107,8 +135,12 @@ func (g *Ghost) AdminCreateTags(tags NewTags) error {
 }
 
 func (g *Ghost) AdminDeleteTag(tag Tag) error {
-	var ghostTagsURLSuffix = "%s/ghost/api/v3/admin/tags/%s/?key=%s"
-	var url = fmt.Sprintf(ghostTagsURLSuffix, g.url, tag.Id, g.contentAPIToken)
+	if err := g.checkAndRenewJWT(); err != nil {
+		return err
+	}
+
+	var ghostTagsURLSuffix = "%s/ghost/api/v3/admin/tags/%s/"
+	var url = fmt.Sprintf(ghostTagsURLSuffix, g.url, tag.Id)
 
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
