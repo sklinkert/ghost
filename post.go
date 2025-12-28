@@ -84,14 +84,58 @@ type Post struct {
 }
 
 type Posts struct {
-	Posts []Post `json:"posts"`
+	Posts []Post     `json:"posts"`
+	Meta  Pagination `json:"meta,omitempty"`
 }
 
 func (g *Ghost) AdminGetPosts() (Posts, error) {
-	const ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&include=tags&formats=html,lexical,mobiledoc"
-	var posts Posts
-	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
+	const limit = 100
+	var allPosts Posts
+	page := 1
 
+	for {
+		url := fmt.Sprintf("%s/ghost/api/v3/admin/posts/?limit=%d&page=%d&include=tags&formats=html,lexical,mobiledoc", g.url, limit, page)
+
+		var pagePosts Posts
+		if err := g.getJson(url, &pagePosts); err != nil {
+			return allPosts, err
+		}
+
+		allPosts.Posts = append(allPosts.Posts, pagePosts.Posts...)
+
+		if pagePosts.Meta.Pagination.Next == nil {
+			break
+		}
+		page = *pagePosts.Meta.Pagination.Next
+	}
+
+	return allPosts, nil
+}
+
+// AdminGetPostsPaginated returns a single page of posts with pagination metadata.
+// Use this instead of AdminGetPosts when dealing with large numbers of posts.
+// Parameters:
+//   - page: 1-indexed page number
+//   - limit: number of posts per page (max 100)
+//   - order: sort order, e.g. "published_at desc", "updated_at desc", "title asc"
+func (g *Ghost) AdminGetPostsPaginated(page, limit int, order string) (Posts, error) {
+	if limit > 100 {
+		limit = 100
+	}
+	if limit < 1 {
+		limit = 15
+	}
+	if page < 1 {
+		page = 1
+	}
+	if order == "" {
+		order = "published_at desc"
+	}
+
+	url := fmt.Sprintf("%s/ghost/api/v3/admin/posts/?limit=%d&page=%d&order=%s&include=tags&formats=html",
+		g.url, limit, page, url.QueryEscape(order))
+
+	var posts Posts
 	if err := g.getJson(url, &posts); err != nil {
 		return posts, err
 	}
@@ -112,15 +156,27 @@ func (g *Ghost) AdminGetPost(postId string) (Posts, error) {
 }
 
 func (g *Ghost) AdminGetPostsByTag(tag string) (Posts, error) {
-	var ghostPostsURLSuffix = "%s/ghost/api/v3/admin/posts/?key=%s&limit=all&formats=html,lexical&filter=tag:" + tag
-	var posts Posts
-	var url = fmt.Sprintf(ghostPostsURLSuffix, g.url, g.contentAPIToken)
+	const limit = 100
+	var allPosts Posts
+	page := 1
 
-	if err := g.getJson(url, &posts); err != nil {
-		return posts, err
+	for {
+		url := fmt.Sprintf("%s/ghost/api/v3/admin/posts/?limit=%d&page=%d&formats=html,lexical&filter=tag:%s", g.url, limit, page, tag)
+
+		var pagePosts Posts
+		if err := g.getJson(url, &pagePosts); err != nil {
+			return allPosts, err
+		}
+
+		allPosts.Posts = append(allPosts.Posts, pagePosts.Posts...)
+
+		if pagePosts.Meta.Pagination.Next == nil {
+			break
+		}
+		page = *pagePosts.Meta.Pagination.Next
 	}
 
-	return posts, nil
+	return allPosts, nil
 }
 
 func (g *Ghost) GetPosts() (Posts, error) {
